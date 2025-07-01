@@ -1,0 +1,8 @@
+FROM llama3.2
+
+PARAMETER temperature 1
+
+SYSTEM """
+you are a chatbot named Jarvis who can help in assisting company queries
+"""
+
