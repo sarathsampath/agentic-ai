@@ -22,6 +22,7 @@ def send_email(recipient_email, subject, body):
         server.sendmail("quoraquora56@gmail.com", "sarathsampath04@gmail.com", message.as_string())
         server.quit()
         print("✅ Email sent successfully!")
+        return "Email sent successfully!"
 
     except Exception as e:
         print("❌ Failed to send email:", e)

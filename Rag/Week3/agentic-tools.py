@@ -28,7 +28,7 @@ tools = [
         "type": "function",
         "function": {
             "name": "get_wikipedia_summary",
-            "description": "Get information about people, places, concepts, historical events, organizations, or any general knowledge topic from Wikipedia. Use this when the user asks 'who is', 'what is', 'tell me about', or needs factual information about any topic.",
+            "description": "Get information about people, places, concepts, historical events, organizations, or any general knowledge topic from Wikipedia. And return the results based on useer topic.",
             "parameters": {
                 "type": "object",
                 "properties": {
@@ -82,8 +82,14 @@ def user_input(query: str):
         # Handle tool calls
         if response_message.tool_calls:
             print("AI wants to use tools:")
-            tool_results = []
 
+            # Create messages array starting with the original conversation
+            messages = [
+                {"role": "user", "content": query},
+                {"role": "assistant", "content": response_message.content, "tool_calls": response_message.tool_calls}
+            ]
+
+            # Execute each tool and add individual tool messages
             for tool_call in response_message.tool_calls:
                 print(f"Calling tool: {tool_call.function.name}")
 
@@ -92,20 +98,36 @@ def user_input(query: str):
 
                 if tool_call.function.name == "get_wikipedia_summary":
                     result = get_wikipedia_summary(args["topic"], args.get("sentences", 3))
-                    tool_results.append(f"Wikipedia: {result}")
                     print(f"Wikipedia result: {result}")
 
                 elif tool_call.function.name == "send_email":
                     result = send_email(args["to"], args["subject"], args["body"])
-                    tool_results.append(f"Email: {result}")
                     print(f"Email result: {result}")
 
                 else:
-                    tool_results.append(f"Unknown tool: {tool_call.function.name}")
-                    print(f"Unknown tool: {tool_call.function.name}")
+                    result = f"Unknown tool: {tool_call.function.name}"
+                    print(result)
 
-            # Return the tool results
-            final_response = " | ".join(tool_results)
+                # Add individual tool message with correct tool_call_id
+                messages.append({
+                    "role": "tool",
+                    "content": result,
+                    "tool_call_id": tool_call.id  # This is the key fix!
+                })
+
+            # Now ask AI to process the results and answer the original question
+            final_response = client.chat.completions.create(
+                model="llama-3.1-8b-instant",
+                messages=messages + [
+                    {"role": "user", "content": "Based on the tool results above, please answer my original question directly and concisely."}
+                ]
+            )
+
+            return {
+                "query": query,
+                "response": final_response.choices[0].message.content,
+                "tools_used": True
+            }
 
         else:
             print("Response without tools:")
