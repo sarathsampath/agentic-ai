@@ -129,3 +129,5 @@ tmp/
 dmypy.json
 .pyre/
 .pytype/
+
+*credentials.json
