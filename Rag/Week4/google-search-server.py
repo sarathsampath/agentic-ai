@@ -12,11 +12,7 @@ mcp = FastMCP("google-search-server")
 @mcp.tool()
 async def web_search(query: str, search_type: str = "general") -> dict:
     """
-    Search the web for industry information, trends, and regulatory updates.
-
-    Args:
-        query: Search query (e.g., "AI industry benchmarks 2024", "GDPR regulatory updates")
-        search_type: Type of search - "general", "trends", "regulatory", "benchmarks"
+    Search the web for information, news, trends, or general knowledge.
     """
     try:
         # Google Custom Search API

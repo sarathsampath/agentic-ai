@@ -22,7 +22,13 @@ class IntelligentQueryClient:
                 command="python3",
                 args=["google-search-server.py"],
                 env=None,
+            ),
+            "rag": StdioServerParameters(
+                command="python3",
+                args=["rag-search-server.py"],
+                env=None,
             )
+
         }
         self.sessions = {}
         self.stdio_contexts = {}
@@ -75,7 +81,7 @@ class IntelligentQueryClient:
         """Get descriptions of available tools for AI processing."""
         tool_descriptions = {
             "read_pdf_from_drive": {
-                "description": "Read PDF content from Google Drive. Use this when user wants to read or extract text from a PDF file stored in Google Drive.",
+                "description": "Contains insurance details. Use this tool when the user wants to know about insurance information.",
                 "parameters": {
                     "type": "object",
                     "properties": {
@@ -85,7 +91,7 @@ class IntelligentQueryClient:
                 }
             },
             "web_search": {
-                "description": "Search the web for information, news, trends, or general knowledge. Use this when user wants to find information about Presidio from the internet.",
+                "description": "Can include anything about Presidio. Use this tool to search the web for information, news, trends, or general knowledge about Presidio or any other topic.",
                 "parameters": {
                     "type": "object",
                     "properties": {
@@ -94,6 +100,16 @@ class IntelligentQueryClient:
                     "required": ["query"]
                 }
             },
+            "get_context_with_sources":{
+                "description": "Contains information about Presidio benefits, policies, and other information releated to employees. Use this tool to get context and sources from the RAG search server, especially about Presidio's benefits, policies, and other information releated to employees.",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "query": {"type": "string", "description": "Search query"}
+                    },
+                    "required": ["query"]
+                }
+            }
 
         }
 
@@ -138,7 +154,7 @@ class IntelligentQueryClient:
 
             # Ask AI to determine which tools to use
             chat_response = self.client.chat.completions.create(
-                model="llama-3.1-8b-instant",
+                model="deepseek-r1-distill-llama-70b",
                 messages=[
                     {
                         "role": "system",
@@ -200,7 +216,7 @@ class IntelligentQueryClient:
                 """
 
                 final_response = self.client.chat.completions.create(
-                    model="llama-3.1-8b-instant",
+                    model="deepseek-r1-distill-llama-70b",
                     messages=[{"role": "user", "content": synthesis_prompt}]
                 )
 

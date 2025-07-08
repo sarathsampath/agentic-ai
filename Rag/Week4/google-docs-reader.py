@@ -2,16 +2,15 @@
 """
 Simple Google Docs Reader MCP Server
 """
-from typing import Any, Dict, List, Optional, Callable, Tuple
+from typing import Any, Dict, List
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 from googleapiclient.discovery import build
-from googleapiclient.http import BatchHttpRequest, MediaIoBaseDownload
+from googleapiclient.http import MediaIoBaseDownload
 from mcp.server.fastmcp import FastMCP
 import os.path
 import pickle
-import io
 import PyPDF2
 import tempfile
 
@@ -49,10 +48,6 @@ def get_credentials() -> Credentials:
 
     return creds
 
-def get_docs_service():
-    """Get the Google Docs service instance."""
-    creds = get_credentials()
-    return build('docs', 'v1', credentials=creds)
 
 def get_drive_service():
     """Get the Google Drive service instance."""
