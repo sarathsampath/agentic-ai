@@ -45,10 +45,3 @@ async def main():
 if __name__ == "__main__":
     asyncio.run(main())
 
-
-
-# <script async src="https://cse.google.com/cse.js?cx=50c0ca2eb594a4ae8">
-# </script>
-# <div class="gcse-search"></div>
-
-# AIzaSyAMufu4HKw4vuIezpe6StQ9VtjUWHirniE
